@@ -30,6 +30,18 @@ app.get("/dinos/:id", (request, response) => {
   response.json(dino[id]);
 });
 
+app.delete("/dinos/:id", (request, response) => {
+  const { id } = request.params;
+  if (!dino[id]) {
+    response.redirect("/404");
+
+    return;
+  }
+
+  const removed = dino.splice(id, 1);
+  response.json(removed);
+});
+
 app.get("/404", (_, response) => {
   response.status(404).json({ error: "Resource not found." });
 });
