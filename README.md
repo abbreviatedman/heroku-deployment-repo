@@ -1,4 +1,4 @@
-# Deploying To Heroku Guide for 8.1
+# Deploying To Heroku Guide for 8.0
 
 ## Setup And Tour
 
@@ -13,12 +13,32 @@
 
 ### Changes In `package.json`
 
-Open the `package.json`. Make the following two changes. Don't forget to follow the JSON format, including double quotes and no trailing commas. Your editor will likely tell you with some underlining if you've done something off!
+Open the `package.json` and make the following two changes. **Don't forget to follow the JSON format, including double quotes and no trailing commas.** Your editor will likely tell you with some underlining if you've done something off!
 
-- We need two different "run my server" scripts in our `scripts` object.
-  - `start` should be set to `node server.js`. Heroku will run this automatically, and we don't need it to run `nodemon` or anything we need while working on the code. It should just run the server using Node!
-  - `dev` should be set to `nodemon server.js`, or whatever you use to run your server with all your dev tools, like restarting the server whenever there are changes. (What Nodemon does.)
-- Add an `engines` object, which should look something like this:
+#### Scripts
+
+We need two different "run my server" scripts in our `scripts` object.
+
+- `start` should be set to `node server.js`. Heroku will run this script automatically, and it does NOT need any of our dev tooling, like restarting our code when changes are made. So just running our server using `node` is all we want here!
+- `dev` should be set to `nodemon server.js`, or whatever command you want to use to run your server with all your dev tools.
+
+Your `scripts` object should look like this:
+
+```json
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "node server.js",
+  "dev": "nodemon server.js"
+},
+```
+
+#### Engines
+
+Add an `engines` object that holds the version of Node that you're running. You can get your version number by running `node --version` on the command line. **Do not add the `v` that Node prints out for you!**
+
+In a team app, you'll decide on some minimum version of Node that everyone can work with without missing any features you know you need. (If you don't know of any you'll need, then you don't need to upgrade!)
+
+Your `engines` object should look something like this:
 
 ```json
 "engines": {
@@ -26,21 +46,19 @@ Open the `package.json`. Make the following two changes. Don't forget to follow 
 },
 ```
 
-Check your node version by typing in `node --version` on the command line. Put that number (minus the "v"!) as the value for `node` in your `engines` object.
-
 ### Check Out `server.js` If You Like
 
 Know what you're deploying! It's not too complex, but might be a bit different. It's always good to see alternate ways to write code and learn from them!
 
 Note the following deployment-focused change: there's an `|| 3000` at the end of our `PORT` assignment. This ensures that if there's no config variable in our deployment, express will still have a port to run on, rather than trying to listen on `undefined`.
 
-## Testing It Out
+## Testing Before You Deploy
 
 ### Run Your Server
 
 First, run `npm start` to make sure it works. It should run `node server.js`. This command is what will run on your deployed server.
 
-But it doesn't run it with our dev tools, like `nodemon`, so try `npm run dev`. It should run `nodemon server.js` (or whatever you want to run for your own development).
+But it doesn't run it with our dev tools, like `nodemon`, so exit out of that command (Ctrl-C) and try `npm run dev`. It should run `nodemon server.js` if you set it up as we did.
 
 Note that for built-in scripts like `start` and `test`, we just need to write `npm start` or `npm test`, but for our own custom scripts, we'll run `npm run [name of script]`.
 
@@ -61,7 +79,7 @@ Then launch Postman (or your endpoint tester of choice). Test out `localhost:300
 
 ### Set Up A Heroku Account
 
-You only have to do this once! (Unless you want multiple accounts to separate your Heroku projects in some way.)
+You only have to do this step once! (Unless you want multiple accounts to separate your Heroku projects in some way.)
 
 Go to http://www.heroku.com and sign up. This will include checking your email for a confirmation link, which will lead to picking a password. Choose a good password you'll remember, or write it down, or, best of all, use a password manager. I recommend the free [Bitwarden!](https://bitwarden.com/)
 
